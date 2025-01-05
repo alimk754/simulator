@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/delete")
+@CrossOrigin("*")
 public class DeletingController {
     @Autowired private DeletingService deletingService;
     @PostMapping("/{MachineId}")

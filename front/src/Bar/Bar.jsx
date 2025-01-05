@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Bar.css";
+import axios from "axios";
 
 export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConnectionMode, onAddQueue, onAddMachine ,setMachines, setQueues, setConnections}) => {
   const [numberOfProducts, setNumberOfProducts] = useState(0);
@@ -13,7 +14,7 @@ export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConne
     }
     setNumberOfProducts(item.value);
     item.value = "";
-  }
+  } 
 
   const handleToggleConnectionMode = () => {
     setIsConnectionMode(!isConnectionMode);
@@ -31,7 +32,11 @@ export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConne
     setQueues([]);
     setConnections([]);
   }
-
+  const simulate =async()=>{
+    try{
+        const response=axios.get(`http://localhost:8080/api/${numberOfProducts}`);
+    }catch(err){}
+  }
   return (
     <div className="toolbar">
       <button className="QButton" onClick={onAddQueue}>
@@ -43,7 +48,7 @@ export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConne
       </button>
 
       <button className="connectionButton" onClick={handleToggleConnectionMode}>{isConnectionMode ? "Drawing Arrows (Click to Exit)" : "Connect"}</button>
-      <button className="runButton">Run</button>
+      <button className="runButton" onClick={simulate}>Run</button>
       <button className="stopButton">Stop</button>
       <button className="resetButton">Reset</button>
       <button className="deleteButton" onClick={handleDelete}>Delete</button>

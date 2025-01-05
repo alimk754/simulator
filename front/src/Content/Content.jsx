@@ -3,6 +3,7 @@ import "./Content.css";
 import Queue from "../Queue/Queue";
 import Machine from "../Machine/Machine";
 import Bar from "../Bar/Bar";
+import axios from 'axios'
 
 const Content = () => {
   const [queues, setQueues] = useState([]);
@@ -13,12 +14,22 @@ const Content = () => {
   const [typeOFStart, setTypeOFStart] = useState(null);
   const [positions, setPositions] = useState({});
 
-  const addQueue = () => {
+
+  const addQueue = async() => {
+    try {
+      const response=axios.post("http://localhost:8080/api/add/queue",{}) 
+    } catch (error) {   
+    }
     const newQueue = `Q${queues.length}`;
-    setQueues([...queues, newQueue]);
+    setQueues(q=>[...queues, newQueue]);
+     
   };
 
   const addMachine = () => {
+    try {
+      const response=axios.post("http://localhost:8080/api/add",{}) 
+    } catch (error) {   
+    }
     const newMachine = `M${machines.length}`;
     setMachines([...machines, newMachine]);
   };
@@ -88,6 +99,22 @@ const Content = () => {
             start: startShape,
             end: shapeId
           };
+          const [startShapeType, startShapeNumberStr] = startShape.split("-");
+          const startShapeNumber = parseInt(startShapeNumberStr, 10); // Convert to number
+          
+          // Split shapeId
+          const [shapeIdType, shapeIdNumberStr] = shapeId.split("-");
+          const shapeIdNumber = parseInt(shapeIdNumberStr, 10); // Convert to number
+          if (startShapeType==="machine"){
+            try{
+                axios.put(`http://localhost:8080/api/MTQ/${startShapeNumber+1}/${shapeIdNumber+1}`)
+            }catch(err){}
+            
+          }else{
+            try{
+              axios.put(`http://localhost:8080/api/QTM/${shapeIdNumber+1}/${startShapeNumber+1}`)
+          }catch(err){}
+          }
 
           console.log("Adding new connection:", newConnection);
           setConnections([...connections, newConnection]);
