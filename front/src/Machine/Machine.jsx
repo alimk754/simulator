@@ -48,6 +48,7 @@ const Machine = ({id, key, content, isDraggable, type, positions, setPositions})
             border: "none",
             backgroundColor: "black",
             color: "white",
+            fontWeight: "bold",
             fontSize: "14px",
             cursor: "grab",
           }}
