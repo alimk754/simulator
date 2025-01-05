@@ -1,15 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Bar.css";
-import { useState } from "react";
 
-export const Bar = () => {
+export const Bar = ({ onAddQueue, onAddMachine }) => {
   const [numberOfProducts, setNumberOfProducts] = useState(0);
-  const [error, SetError] = useState(null);
+  const [error, setError] = useState(null);
 
   function addClick() {
     const item = document.getElementById("products");
     if (item.value === "" || item.value <= 0) {
-      SetError("Please enter a valid number");
+      setError("Please enter a valid number");
       return;
     }
     setNumberOfProducts(item.value);
@@ -18,15 +17,27 @@ export const Bar = () => {
 
   return (
     <div className="toolbar">
-      <button className="QButton">Add Q</button>
-      <button className="MButton">Add M</button>
+      <button className="QButton" onClick={onAddQueue}>
+        Add Q
+      </button>
+
+      <button className="MButton" onClick={onAddMachine}>
+        Add M
+      </button>
+
       <button className="connectionButton">Connection</button>
       <button className="runButton">Run</button>
       <button className="stopButton">Stop</button>
       <button className="resetButton">Reset</button>
 
       <div className="input">
-        <input type="number" id="products" min="0" placeholder="Enter number" onChange={()=>SetError(null)} />
+        <input
+          type="number"
+          id="products"
+          min="0"
+          placeholder="Enter number"
+          onChange={() => setError(null)}
+        />
         {error && <div className="error-message">{error}</div>}
         <label htmlFor="products">Number Of Products</label>
       </div>
@@ -37,4 +48,5 @@ export const Bar = () => {
     </div>
   );
 };
+
 export default Bar;

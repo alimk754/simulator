@@ -1,4 +1,3 @@
-
 .toolbar {
     display: flex;
     justify-content: space-between;
@@ -52,7 +51,7 @@
 }
 
 
-.toolbar .QButton { 
+.toolbar .QButton {
     background-color: #28a745;
 }
 
@@ -60,7 +59,7 @@
     background-color: #218838;
 }
 
-.toolbar .MButton { 
+.toolbar .MButton {
     background-color: #17a2b8;
 }
 
@@ -68,7 +67,7 @@
     background-color: #138496;
 }
 
-.toolbar .connectionButton { 
+.toolbar .connectionButton {
     background-color: #ffc107;
     color: #000;
 }
@@ -85,7 +84,7 @@
     background-color: #218838;
 }
 
-.toolbar .stopButton { 
+.toolbar .stopButton {
     background-color: #dc3545;
 }
 
@@ -101,7 +100,7 @@
     background-color: #5a6268;
 }
 
-.toolbar .addButton { 
+.toolbar .addButton {
     background-color: #6610f2;
 }
 
@@ -113,7 +112,7 @@
 .error-message {
     color: #dc3545;
     font-size: 12px;
-    margin-top: 5px; 
+    margin-top: 5px;
     position: absolute;
     bottom: -20px;
     left: 0;
