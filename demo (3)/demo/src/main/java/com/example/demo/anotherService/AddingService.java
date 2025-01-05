@@ -13,10 +13,10 @@ import java.util.Optional;
 public class AddingService {
     Simulator sim=Simulator.getInstance();
 
-    public void addMachine(Machine machine,int sim_id){
+    public void addMachine(Machine machine){
             sim.addMachine(machine);
     }
-    public void addQueue(Queueing queue, int sim_id){
+    public void addQueue(Queueing queue){
             sim.addQueue(queue);
     }
 }

@@ -10,7 +10,8 @@ import java.util.Random;
 
 public class Machine implements Runnable{
     private int MachineId;
-    private int color=8;
+    private String color;
+    private String ogcolor;
     int seconds=3;
     List<Queueing> Sending=new ArrayList<>();
     List<Queueing> requesting=new ArrayList<>();
@@ -38,11 +39,11 @@ public class Machine implements Runnable{
         return seconds;
     }
 
-    public int getColor() {
+    public String getColor() {
         return color;
     }
 
-    public void setColor(int color) {
+    public void setColor(String color) {
         this.color = color;
     }
 
@@ -71,27 +72,26 @@ public class Machine implements Runnable{
         Random random = new Random();
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                // Check if the machine is working
+
                 synchronized (this) {
-                    if (isWorking) {
+                    while (isWorking) {
                         System.out.println("Machine " + getMachineId() + " is waiting (isWorking=true)");
                         wait(); // Wait while holding the lock
                     }
                 }
-
-                // Find non-empty sending queues
                 List<Queueing> nonEmptySendingQueues = Sending.stream()
                         .filter(queue -> queue != null && !queue.queue.isEmpty())
                         .toList();
 
-                while (nonEmptySendingQueues.isEmpty()) {
-                    nonEmptySendingQueues = Sending.stream()
-                            .filter(queue -> queue != null && !queue.queue.isEmpty())
-                            .toList();
-                    System.out.println("Machine " + getMachineId() + " is waiting (no non-empty queues)");
-                }
 
-                // Consume a product from a random non-empty queue
+                synchronized (this) {
+                    while (nonEmptySendingQueues.isEmpty()) {
+                        System.out.println("Machine " + getMachineId() + " is waiting (no non-empty queues)");
+                        nonEmptySendingQueues = Sending.stream()
+                                .filter(queue -> queue != null && !queue.queue.isEmpty())
+                                .toList();
+                    }
+                }
                 Products product = null;
                 int randomQueue = random.nextInt(nonEmptySendingQueues.size());
                 Queueing q1 = nonEmptySendingQueues.get(randomQueue);
@@ -101,22 +101,22 @@ public class Machine implements Runnable{
                         product = q1.remove();
                         System.out.println("Machine " + getMachineId() + " is consuming product with color " + product.getColor());
                     } catch (Exception e) {
-                        Thread.currentThread().interrupt(); // Restore interrupted status
+                        Thread.currentThread().interrupt();
                         System.err.println("Error removing product: " + e.getMessage());
-                        return; // Exit the run method if interrupted
+                        return;
                     }
                     this.color = product.getColor();
-                    this.isWorking = true; // Mark the machine as working
+                    this.isWorking = true;
                 }
 
                 // Simulate processing time
                 try {
                     System.out.println("Machine " + getMachineId() + " is sleeping for " + seconds + " seconds");
-                    Thread.sleep(seconds * 1000); // Sleep for the specified duration
+                    Thread.sleep(seconds * 1000);
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt(); // Restore interrupted status
+                    Thread.currentThread().interrupt();
                     System.err.println("Thread interrupted: " + e.getMessage());
-                    return; // Exit the run method if interrupted
+                    return;
                 }
 
                 // Add the product to a random requesting queue
@@ -124,20 +124,18 @@ public class Machine implements Runnable{
                 randomQueue = random.nextInt(requesting.size());
                 requesting.get(randomQueue).add(product);
 
-                // Mark the machine as not working and notify other threads
                 synchronized (this) {
-                    this.isWorking = false; // Mark the machine as not working
-                    notifyAll(); // Notify waiting threads
+                    this.isWorking = false;
+                    notifyAll();
                     System.out.println("Machine " + getMachineId() + " is notifying other threads");
                 }
 
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Restore interrupted status
+                Thread.currentThread().interrupt();
                 System.err.println("Thread interrupted: " + e.getMessage());
-                return; // Exit the run method if interrupted
+                return;
             } catch (Exception e) {
                 System.err.println("Error in machine " + getMachineId() + ": " + e.getMessage());
-                e.printStackTrace();
             }
         }
     }
@@ -155,15 +153,11 @@ public class Machine implements Runnable{
     public void removerequesting(Queueing q) {
         requesting.remove(q);
     }
-
-    public Machine() {
-        Random random = new Random();
-        seconds = random.nextInt(21) + 5;
-    }
     //Builder
-    public Machine(int color){
+    public Machine(){
         Random random = new Random();
         seconds = random.nextInt(21) + 5;
-        this.color=color;
+        this.color="#000000";
+        this.ogcolor="#000000";
     }
 }

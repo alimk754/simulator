@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.*;
 public class AddingController {
     @Autowired
     private AddingService addingService;
-    @PostMapping("/{simId}")
-    public void addMachine(@RequestBody MachineDto machine, @PathVariable int simId){
-        Machine machine1=new Machine(machine.color);
-        addingService.addMachine(machine1, simId);
+    @PostMapping("")
+    public void addMachine(@RequestBody MachineDto machine){
+        Machine machine1=new Machine();
+        addingService.addMachine(machine1);
     }
-    @PostMapping("/queue/{simId}")
-    public void addQueue(@RequestBody QueueDto queue, @PathVariable int simId)
+    @PostMapping("/queue")
+    public void addQueue(@RequestBody QueueDto queue)
     {
         Queueing q=new Queueing(queue.capacity);
-        addingService.addQueue(q, simId);
+        addingService.addQueue(q);
     }
 }

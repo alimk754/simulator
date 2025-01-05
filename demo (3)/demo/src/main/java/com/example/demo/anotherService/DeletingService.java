@@ -13,10 +13,10 @@ import java.util.Optional;
 @Service
 public class DeletingService {
     Simulator sim =Simulator.getInstance();
-    public void deleteMachine(int machineId, int sim_id) {
+    public void deleteMachine(int machineId) {
         sim.deleteMachineById(machineId);
     }
-    public void deleteQueue(int queueId, int sim_id){
+    public void deleteQueue(int queueId){
                 sim.deleteQueueById(queueId);
             }
 }
