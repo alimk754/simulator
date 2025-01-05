@@ -10,6 +10,7 @@ const Content = () => {
   const [isConnectionMode, setIsConnectionMode] = useState(false);
   const [connections, setConnections] = useState([]);
   const [startShape, setStartShape] = useState(null);
+  const [typeOFStart, setTypeOFStart] = useState(null);
   const [positions, setPositions] = useState({});
 
   const addQueue = () => {
@@ -47,15 +48,18 @@ const Content = () => {
     console.log("Clicked shape:", { type: shapeType, id: shapeId });
 
     if (!startShape) {
-      if (shapeType === "queue") {
         console.log("Setting start shape:", shapeId);
+        setTypeOFStart(shapeType);
         setStartShape(shapeId);
-      } else if (shapeType === "machine") {
-        alert('Arrows can only start from queues!');
-      }
     } else {
-      if (shapeType === "machine") {
+      if (typeOFStart !== shapeType) {
         console.log("Creating connection from", startShape, "to", shapeId);
+        if (connections.some(connection => connection.start === startShape && connection.end === shapeId) || connections.some(connection => connection.start === shapeId && connection.end === startShape)) {
+          alert("Connection already exists");
+          setStartShape(null);
+          setTypeOFStart(null);
+          return;
+        }
         
         const startElement = document.getElementById(startShape);
         const endElement = targetElement;
@@ -93,11 +97,11 @@ const Content = () => {
             endElement: !!endElement 
           });
         }
-
-        setStartShape(null);
-      } else if (shapeType === "queue") {
-        alert('Arrows can only end on machines!');
+      } else {
+        alert('Arrows can only send from M to Q or from M to Q');
       }
+      setStartShape(null);
+      setTypeOFStart(null);
     }
   };
 
@@ -108,6 +112,8 @@ const Content = () => {
         setIsConnectionMode={setIsConnectionMode} 
         onAddQueue={addQueue} 
         onAddMachine={addMachine} 
+        setStartShape={setStartShape}
+        setTypeOFStart={setTypeOFStart}
       />
 
       <div className="content" onClick={selectShape}>

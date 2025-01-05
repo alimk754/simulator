@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Bar.css";
 
-export const Bar = ({isConnectionMode, setIsConnectionMode, onAddQueue, onAddMachine }) => {
+export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConnectionMode, onAddQueue, onAddMachine }) => {
   const [numberOfProducts, setNumberOfProducts] = useState(0);
   const [error, setError] = useState(null);
 
@@ -15,6 +15,12 @@ export const Bar = ({isConnectionMode, setIsConnectionMode, onAddQueue, onAddMac
     item.value = "";
   }
 
+  const handleToggleConnectionMode = () => {
+    setIsConnectionMode(!isConnectionMode);
+    setStartShape(null);
+    setTypeOFStart(null);
+  }
+
   return (
     <div className="toolbar">
       <button className="QButton" onClick={onAddQueue}>
@@ -25,7 +31,7 @@ export const Bar = ({isConnectionMode, setIsConnectionMode, onAddQueue, onAddMac
         Add M
       </button>
 
-      <button className="connectionButton" onClick={() => setIsConnectionMode(!isConnectionMode)}>{isConnectionMode ? "Drawing Arrows (Click to Exit)" : "Connect"}</button>
+      <button className="connectionButton" onClick={handleToggleConnectionMode}>{isConnectionMode ? "Drawing Arrows (Click to Exit)" : "Connect"}</button>
       <button className="runButton">Run</button>
       <button className="stopButton">Stop</button>
       <button className="resetButton">Reset</button>
