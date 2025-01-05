@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Bar.css";
 
-export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConnectionMode, onAddQueue, onAddMachine }) => {
+export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConnectionMode, onAddQueue, onAddMachine ,setMachines, setQueues, setConnections}) => {
   const [numberOfProducts, setNumberOfProducts] = useState(0);
   const [error, setError] = useState(null);
 
@@ -21,6 +21,17 @@ export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConne
     setTypeOFStart(null);
   }
 
+  const handleDelete = () => {
+    setNumberOfProducts(0);
+    setError(null);
+    setStartShape(null);
+    setTypeOFStart(null);
+    setIsConnectionMode(false);
+    setMachines([]);
+    setQueues([]);
+    setConnections([]);
+  }
+
   return (
     <div className="toolbar">
       <button className="QButton" onClick={onAddQueue}>
@@ -35,6 +46,7 @@ export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConne
       <button className="runButton">Run</button>
       <button className="stopButton">Stop</button>
       <button className="resetButton">Reset</button>
+      <button className="deleteButton" onClick={handleDelete}>Delete</button>
 
       <div className="input">
         <input

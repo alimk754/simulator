@@ -42,8 +42,8 @@ const Machine = ({id, key, content, isDraggable, type, positions, setPositions})
           id={id}
           data-type={type}
           style={{
-            width: "70px",
-            height: "70px",
+            width: "60px",
+            height: "60px",
             borderRadius: "50%",
             border: "none",
             backgroundColor: "black",
