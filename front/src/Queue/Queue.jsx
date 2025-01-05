@@ -1,30 +1,42 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import Draggable from "react-draggable";
 
-const Queue = ({id,key, content, isDraggable, type, positions, setPositions}) => {
+const Queue = ({id, key, content, isDraggable, type, positions, setPositions}) => {
   const buttonRef = useRef(null);
 
-  const handleDragStop = (e, data) => {
-    setPositions((prevPositions) => {
-      // Check if the id exists in the positions object
-      if (prevPositions[id]) {
-        // Update the existing entry
-        return {
-          ...prevPositions,
-          [id]: { x: data.x, y: data.y },
-        };
-      } else {
-        // Add a new entry
-        return {
-          ...prevPositions,
-          [id]: { x: data.x, y: data.y },
-        };
+  // Update position whenever drag occurs
+  const handleDrag = (e, data) => {
+    const rect = buttonRef.current.getBoundingClientRect();
+    setPositions(prev => ({
+      ...prev,
+      [id]: { 
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
       }
-    });
-    console.log(positions);
-  }
+    }));
+  };
+
+  // Initialize position on mount
+  useEffect(() => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPositions(prev => ({
+        ...prev,
+        [id]: { 
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        }
+      }));
+    }
+  }, []);
+
   return (
-    <Draggable disabled={!isDraggable} nodeRef={buttonRef} onStop={handleDragStop}>
+    <Draggable 
+      disabled={!isDraggable} 
+      nodeRef={buttonRef} 
+      onDrag={handleDrag}
+      onStop={handleDrag}
+    >
       <div ref={buttonRef}>
         <button
           id={id}
