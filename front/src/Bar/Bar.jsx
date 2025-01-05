@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Bar.css";
 
-export const Bar = ({ onAddQueue, onAddMachine }) => {
+export const Bar = ({isConnectionMode, setIsConnectionMode, onAddQueue, onAddMachine }) => {
   const [numberOfProducts, setNumberOfProducts] = useState(0);
   const [error, setError] = useState(null);
 
@@ -25,7 +25,7 @@ export const Bar = ({ onAddQueue, onAddMachine }) => {
         Add M
       </button>
 
-      <button className="connectionButton">Connection</button>
+      <button className="connectionButton" onClick={() => setIsConnectionMode(!isConnectionMode)}>{isConnectionMode ? "Drawing Arrows (Click to Exit)" : "Connect"}</button>
       <button className="runButton">Run</button>
       <button className="stopButton">Stop</button>
       <button className="resetButton">Reset</button>
