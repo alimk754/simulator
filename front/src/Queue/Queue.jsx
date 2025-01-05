@@ -45,6 +45,8 @@ const Queue = ({id, key, content, isDraggable, type, positions, setPositions}) =
             width: "50px",
             height: "50px",
             backgroundColor: "#ffa500",
+            borderRadius: "10%",
+            marginRight: "5px",
             color: "white",
             border: "none",
             fontSize: "14px",
