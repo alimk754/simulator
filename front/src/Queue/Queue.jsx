@@ -42,8 +42,8 @@ const Queue = ({id, key, content, isDraggable, type, positions, setPositions}) =
           id={id}
           data-type={type}
           style={{
-            width: "70px",
-            height: "35px",
+            width: "50px",
+            height: "50px",
             backgroundColor: "#ffa500",
             color: "white",
             border: "none",

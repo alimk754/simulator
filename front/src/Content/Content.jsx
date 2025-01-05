@@ -114,6 +114,9 @@ const Content = () => {
         onAddMachine={addMachine} 
         setStartShape={setStartShape}
         setTypeOFStart={setTypeOFStart}
+        setMachines={setMachines}
+        setQueues={setQueues}
+        setConnections={setConnections}
       />
 
       <div className="content" onClick={selectShape}>
@@ -148,42 +151,78 @@ const Content = () => {
         console.log("Rendering arrow:", arrow);
         const startPos = positions[arrow.start];
         const endPos = positions[arrow.end];
-        
+
         if (!startPos || !endPos) {
           console.log("Missing positions for arrow:", {
             arrow,
             startPos,
-            endPos
+            endPos,
           });
           return null;
         }
 
+        // Fetch the start and end elements dynamically
+        const startElement = document.getElementById(arrow.start);
+        const endElement = document.getElementById(arrow.end);
+
+        if (!startElement || !endElement) {
+          console.log("Could not find start or end element for arrow:", {
+            arrow,
+            startElement: !!startElement,
+            endElement: !!endElement,
+          });
+          return null;
+        }
+
+        // Check if both are Machines
+        const isMachineToMachine =
+          startElement.dataset.type === "machine" && endElement.dataset.type === "machine";
+
+        // Calculate dimensions for both start and end elements
+        const startRect = startElement.getBoundingClientRect();
+        const endRect = endElement.getBoundingClientRect();
+
+        // Calculate radii for start and end elements
+        const startRadius = Math.min(startRect.width, startRect.height) / 2;
+        const endRadius = Math.min(endRect.width, endRect.height) / 2;
+
+        // Define margin offsets
+        const defaultMarginOffset = 10; // Default margin for all connections
+        const machineMarginOffset = 5; // Closer margin for Machine-to-Machine connections
+        const marginOffset = isMachineToMachine ? machineMarginOffset : defaultMarginOffset;
+
         const dx = endPos.x - startPos.x;
         const dy = endPos.y - startPos.y;
-        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-        const length = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx); // In radians
 
-        console.log("Arrow calculations:", {
-          dx,
-          dy,
-          angle,
-          length
-        });
+        // Adjust start and end positions
+        const adjustedStart = {
+          x: startPos.x + Math.cos(angle) * (startRadius + marginOffset),
+          y: startPos.y + Math.sin(angle) * (startRadius + marginOffset),
+        };
+        const adjustedEnd = {
+          x: endPos.x - Math.cos(angle) * (endRadius + marginOffset),
+          y: endPos.y - Math.sin(angle) * (endRadius + marginOffset),
+        };
+
+        // Recalculate line length after adjustment
+        const adjustedDx = adjustedEnd.x - adjustedStart.x;
+        const adjustedDy = adjustedEnd.y - adjustedStart.y;
+        const adjustedLength = Math.sqrt(adjustedDx * adjustedDx + adjustedDy * adjustedDy);
 
         return (
           <div
             key={arrow.id}
             style={{
               position: 'fixed',
-              left: `${startPos.x}px`,
-              top: `${startPos.y}px`,
-              width: `${length}px`,
+              left: `${adjustedStart.x}px`,
+              top: `${adjustedStart.y}px`,
+              width: `${adjustedLength}px`,
               height: '2px',
               backgroundColor: 'black',
               transformOrigin: '0 0',
-              transform: `rotate(${angle}deg)`,
-              zIndex: 1000,
-              pointerEvents: 'none'
+              transform: `rotate(${angle * (180 / Math.PI)}deg)`,
+              pointerEvents: 'none',
             }}
           >
             <div
@@ -195,7 +234,7 @@ const Content = () => {
                 height: 0,
                 borderTop: '5px solid transparent',
                 borderBottom: '5px solid transparent',
-                borderLeft: '8px solid black'
+                borderLeft: '8px solid black',
               }}
             />
           </div>
