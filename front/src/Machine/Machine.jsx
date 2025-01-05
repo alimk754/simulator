@@ -1,13 +1,35 @@
 import React, { useRef } from "react";
 import Draggable from "react-draggable";
 
-const Machine = (props) => {
+const Machine = ({id,key, content, isDraggable, type, positions, setPositions}) => {
   const buttonRef = useRef(null);
 
+  const handleDragStop = (e, data) => {
+    setPositions((prevPositions) => {
+      // Check if the id exists in the positions object
+      if (prevPositions[id]) {
+        // Update the existing entry
+        return {
+          ...prevPositions,
+          [id]: { x: data.x, y: data.y },
+        };
+      } else {
+        // Add a new entry
+        return {
+          ...prevPositions,
+          [id]: { x: data.x, y: data.y },
+        };
+      }
+    });
+    console.log(positions);
+  };
   return (
-    <Draggable nodeRef={buttonRef}>
+    <Draggable disabled={!isDraggable} nodeRef={buttonRef} onStop={handleDragStop}>
       <div ref={buttonRef}>
         <button
+          id={id}
+          data-type={type}
+          
           style={{
             width: "70px",
             height: "70px",
@@ -19,7 +41,7 @@ const Machine = (props) => {
             cursor: "grab",
           }}
         >
-          {props.content || "Machine"}
+          {content || "Machine"}
         </button>
       </div>
     </Draggable>
