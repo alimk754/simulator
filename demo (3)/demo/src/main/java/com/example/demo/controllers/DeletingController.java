@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/delete")
 public class DeletingController {
     @Autowired private DeletingService deletingService;
-    @PostMapping("/{MachineId}/{simId}")
-    public void addMachine(@PathVariable int MachineId, @PathVariable int simId){
-        deletingService.deleteMachine(MachineId, simId);
+    @PostMapping("/{MachineId}")
+    public void addMachine(@PathVariable int MachineId){
+        deletingService.deleteMachine(MachineId);
     }
-    @PostMapping("/{queueId}/{simId}")
-    public void addQueue(@PathVariable int queueId, @PathVariable int simId){
-        deletingService.deleteQueue(queueId, simId);
+    @PostMapping("/{queueId}")
+    public void addQueue(@PathVariable int queueId){
+        deletingService.deleteQueue(queueId);
     }
 }

@@ -8,21 +8,34 @@ import java.util.Random;
 public class Products {
 
     private int id;
-    private int color;
+    private String color;
     public int getId() {
         return id;
     }
     public void setId(int id) {
         this.id = id;
     }
-    public int getColor() {
+    public String getColor() {
         return color;
     }
-    public void setColor(int color) {
+    public void setColor(String color) {
         this.color = color;
+    }
+    public static String generateRandomHexColor() {
+        Random random = new Random();
+        StringBuilder hexColor = new StringBuilder("#");
+
+        // Generate 6 random hex digits (for RRGGBB)
+        for (int i = 0; i < 6; i++) {
+            int randomDigit = random.nextInt(16);
+            hexColor.append(Integer.toHexString(randomDigit));
+        }
+
+        return hexColor.toString();
     }
     Products(){
         Random rand=new Random();
-        this.color= rand.nextInt(7)+1;
+        color=Products.generateRandomHexColor();
+
     }
 }
