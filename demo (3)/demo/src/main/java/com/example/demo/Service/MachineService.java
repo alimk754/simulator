@@ -1,8 +1,8 @@
 package com.example.demo.Service;
 
-import com.example.demo.Repos.Machine_repo;
-import com.example.demo.Repos.Product_repo;
+
 import com.example.demo.classes.Machine;
+import com.example.demo.classes.Simulator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,21 +11,15 @@ import java.util.Optional;
 
 @Service
 public class MachineService {
-    @Autowired
-    private Machine_repo machineRepo;
-    public Machine saveMachine(Machine product) {
-        return machineRepo.save(product);
+    Simulator simulator =Simulator.getInstance();
+    public void saveMachine(Machine machine) {
+        simulator.addMachine(machine);
     }
 
-    public Optional<Machine> getMachineById(int id) {
-        return machineRepo.findById(id);
+    public Machine getMachineById(int id) {
+        return simulator.findMachineById(id);
     }
-
-    public List<Machine> getAllMachines() {
-        return machineRepo.findAll();
-    }
-
     public void deleteMachine(int id) {
-        machineRepo.deleteById(id);
+        simulator.deleteMachineById(id);
     }
 }
