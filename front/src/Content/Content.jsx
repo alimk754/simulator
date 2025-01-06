@@ -18,7 +18,7 @@ const Content = () => {
 
   const addQueue = async() => {
     try {
-      const response=axios.post("http://localhost:8080/api/add/queue",{}) 
+      const response=await axios.post("http://localhost:8080/api/add/queue",{}) 
     } catch (error) {   
     }
     const newQueue = `Q${queues.length}`;
@@ -26,17 +26,17 @@ const Content = () => {
      
   };
 
-  const addMachine = () => {
+  const addMachine = async() => {
   
     const newMachine = `M${machines.length}`;
     setMachines([...machines, newMachine]);
     try {
-      const response=axios.post("http://localhost:8080/api/add",{}) 
+      const response=await axios.post("http://localhost:8080/api/add",{}) 
     } catch (error) {   
     }
   };
 
-  const selectShape = (e) => {
+  const selectShape = async(e) => {
     if (!isConnectionMode) return;
 
     const targetElement = e.target.closest('button');
@@ -99,12 +99,12 @@ const Content = () => {
           const shapeIdNumber = parseInt(shapeIdNumberStr, 10); // Convert to number
           if (startShapeType==="machine"){
             try{
-                axios.put(`http://localhost:8080/api/MTQ/${startShapeNumber+1}/${shapeIdNumber+1}`)
+                await axios.put(`http://localhost:8080/api/MTQ/${startShapeNumber+1}/${shapeIdNumber+1}`)
             }catch(err){}
             
           }else{
             try{
-              axios.put(`http://localhost:8080/api/QTM/${shapeIdNumber+1}/${startShapeNumber+1}`)
+             await axios.put(`http://localhost:8080/api/QTM/${shapeIdNumber+1}/${startShapeNumber+1}`)
           }catch(err){}
           }
 

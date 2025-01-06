@@ -12,9 +12,7 @@ public class Simulator {
     private int QueueId=0;
     private List<Queueing> queues=new ArrayList<>();
     private List<Machine> machines=new ArrayList<>();
-
-
-
+    private List<Thread> threads=new ArrayList<>();
     public List<Queueing> getQueues() {
         return queues;
     }
@@ -99,11 +97,50 @@ public class Simulator {
         System.out.println(machines.size());
         System.out.println(queues.size());
         for (Machine machine :machines){
-            new Thread(machine).start();
+            Thread thread =new Thread(machine);
+            threads.add(thread);
+            thread.start();
+        }
+        new Thread(this::monitorThreads).start();
+    }
+    // Method to monitor threads
+    private void monitorThreads() {
+        while (true) {
+            try {
+                Thread.sleep(1000); // Check every second
+            } catch (InterruptedException e) {
+                System.out.println("Monitor thread interrupted.");
+                break;
+            }
+
+            boolean allWaiting = true;
+            for (Machine machine : machines) {
+                if (machine.isWorking()) {
+                    allWaiting = false;
+                    break;
+                }
+            }
+
+            if (allWaiting) {
+                System.out.println("All threads are waiting. Interrupting all threads...");
+                interruptAllThreads();
+                break; // Exit the monitor loop
+            }
+        }
+    }
+
+    // Method to interrupt all threads
+    private void interruptAllThreads() {
+        for (Thread thread : threads) {
+            thread.interrupt(); // Interrupt each thread
         }
     }
 
     public void delete(){
+        for (Thread thread :threads){
+            thread.interrupt();
+        }
+        threads.clear();
         machines.clear();
         queues.clear();
         machineId=0;

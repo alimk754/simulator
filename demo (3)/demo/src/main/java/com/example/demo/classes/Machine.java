@@ -1,17 +1,15 @@
 package com.example.demo.classes;
 
+import com.example.demo.subscribers.MachineSubscriber;
 import com.example.demo.controllers.WebSocketController;
-import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.crypto.Mac;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 
 public class Machine implements Runnable{
-    private WebSocketController webSocketController;
+    private MachineSubscriber webSocketController;
     private int MachineId;
     private String color;
     private final String ogcolor="#000000";
@@ -21,10 +19,6 @@ public class Machine implements Runnable{
     boolean isWorking = false;
 
     // Getters and Setters
-
-    public WebSocketController getWebSocketController() {
-        return webSocketController;
-    }
 
     public void setWebSocketController(WebSocketController webSocketController) {
         this.webSocketController = webSocketController;
@@ -83,28 +77,27 @@ public class Machine implements Runnable{
         Random random = new Random();
         while (!Thread.currentThread().isInterrupted()) {
             try {
-
                 synchronized (this) {
                     while (isWorking) {
                         System.out.println("Machine " + getMachineId() + " is waiting (isWorking=true)");
                         wait(); // Wait while holding the lock
                     }
                 }
+
                 List<Queueing> nonEmptySendingQueues = Sending.stream()
                         .filter(queue -> queue != null && !queue.queue.isEmpty())
                         .toList();
-
 
                 synchronized (this) {
                     while (nonEmptySendingQueues.isEmpty()) {
                         System.out.println("Machine " + getMachineId() + " is waiting (no non-empty queues)");
                         Thread.sleep(1000);
                         nonEmptySendingQueues = Sending.stream()
-                                .filter(queue -> queue!=null&&!queue.queue.isEmpty())
+                                .filter(queue -> queue != null && !queue.queue.isEmpty())
                                 .toList();
-
                     }
                 }
+
                 Products product = null;
                 int randomQueue = random.nextInt(nonEmptySendingQueues.size());
                 Queueing q1 = nonEmptySendingQueues.get(randomQueue);
@@ -135,13 +128,22 @@ public class Machine implements Runnable{
 
                 // Add the product to a random requesting queue
                 System.out.println("Machine " + getMachineId() + " is finished");
-                randomQueue = random.nextInt(requesting.size());
-                requesting.get(randomQueue).add(product);
+                if (!requesting.isEmpty()) {
+                    randomQueue = random.nextInt(requesting.size());
+                    Queueing targetQueue = requesting.get(randomQueue);
+                    if (targetQueue != null) {
+                        targetQueue.add(product);
+                    } else {
+                        System.err.println("Target queue is null!");
+                    }
+                } else {
+                    System.err.println("Requesting list is empty!");
+                }
 
                 synchronized (this) {
                     this.isWorking = false;
                     notifyAll();
-                    this.color=ogcolor;
+                    this.color = ogcolor;
                     System.out.println("Machine " + getMachineId() + " is notifying other threads");
                     webSocketController.updateMachineState(this);
                 }

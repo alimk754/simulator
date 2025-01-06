@@ -1,9 +1,8 @@
 package com.example.demo.controllers;
 
-import com.example.demo.classes.Machine;
 import com.example.demo.classes.Queueing;
-import com.example.demo.dto.MachineDto;
 import com.example.demo.dto.QueueDto;
+import com.example.demo.subscribers.QueueSubscriber;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.concurrent.ConcurrentHashMap;
 @Controller
-public class QueueWebSocket extends TextWebSocketHandler{
+public class QueueWebSocket extends TextWebSocketHandler implements QueueSubscriber {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketController.class);
     private final ConcurrentHashMap<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -25,7 +24,8 @@ public class QueueWebSocket extends TextWebSocketHandler{
         logger.info("New WebSocket connection established: {}", session.getId());
         sessions.put(session.getId(), session);
     }
-    public void uptadeQueue(Queueing queue){
+    @Override
+    public void updateQueue(Queueing queue){
         try {
             QueueDto queueDto=new QueueDto();
             queueDto.capacity=queue.getQueue().size();

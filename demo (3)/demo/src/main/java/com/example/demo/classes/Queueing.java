@@ -1,15 +1,13 @@
 package com.example.demo.classes;
 
+import com.example.demo.subscribers.QueueSubscriber;
 import com.example.demo.controllers.QueueWebSocket;
-import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 public class Queueing {
-    private QueueWebSocket queueWebSocket;
+    private QueueSubscriber queueWebSocket; //programming to interface
     private int id;
     List<Products> queue=new ArrayList<>(50);
 
@@ -23,7 +21,7 @@ public class Queueing {
 
     public synchronized void add(Products p){
         queue.addFirst(p);
-        queueWebSocket.uptadeQueue(this);
+        queueWebSocket.updateQueue(this);
         notifyAll();
     }
     public synchronized Products remove() throws InterruptedException {
@@ -31,15 +29,10 @@ public class Queueing {
             wait();
         notifyAll();
         Products p=queue.removeLast();
-        queueWebSocket.uptadeQueue(this);
+        queueWebSocket.updateQueue(this);
         return p;
 
     }
-
-    public QueueWebSocket getQueueWebSocket() {
-        return queueWebSocket;
-    }
-
     public void setQueueWebSocket(QueueWebSocket queueWebSocket) {
         this.queueWebSocket = queueWebSocket;
     }

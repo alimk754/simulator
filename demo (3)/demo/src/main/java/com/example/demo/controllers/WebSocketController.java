@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import com.example.demo.classes.Machine;
 import com.example.demo.dto.MachineDto;
 import com.example.demo.dto.QueueDto;
+import com.example.demo.subscribers.MachineSubscriber;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class WebSocketController extends TextWebSocketHandler {
+public class WebSocketController extends TextWebSocketHandler implements MachineSubscriber {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketController.class);
     private final ConcurrentHashMap<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -25,7 +26,7 @@ public class WebSocketController extends TextWebSocketHandler {
         logger.info("New WebSocket connection established: {}", session.getId());
         sessions.put(session.getId(), session);
     }
-
+    @Override
     public void updateMachineState(Machine machine) {
         try {
             MachineDto stateDTO = new MachineDto(
