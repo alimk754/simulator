@@ -128,6 +128,8 @@ public class Simulator {
 
     // Start the simulation
     public synchronized void start(int size) {
+        queues.get(queues.size() - 1).queue.clear();
+        queues.get(queues.size() - 1).getQueueWebSocket().updateQueue(queues.get(queues.size() - 1));
         Queueing mainQueue = queues.get(0);
         for (int i = 0; i < size; i++) {
             Products p = new Products();
