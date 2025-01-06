@@ -238,6 +238,7 @@ public class Simulator {
         for (QueuesSnapShot queueSnapShot : replayTracker.getQueuesSnapShots()) {
             Queueing queue = new Queueing(queueSnapShot);
             queues.add(queue);
+            queue.getQueueWebSocket().updateQueue(queue);
         }
         for (MachineSnapShot machineSnapShot : replayTracker.getMachineSnapShots()) {
             Machine machine = new Machine(machineSnapShot);
@@ -245,6 +246,7 @@ public class Simulator {
                 int id=queueing.getId();
                 machine.Sending.remove(queueing);
                 machine.Sending.add(this.findQueueById(id));
+
             }
             for(Queueing queueing: machine.requesting){
                 int id=queueing.getId();
