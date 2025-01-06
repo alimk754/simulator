@@ -100,7 +100,7 @@ public class Machine implements Runnable{
                         System.out.println("Machine " + getMachineId() + " is waiting (no non-empty queues)");
                         Thread.sleep(1000);
                         nonEmptySendingQueues = Sending.stream()
-                                .filter(queue -> !queue.queue.isEmpty())
+                                .filter(queue -> queue!=null&&!queue.queue.isEmpty())
                                 .toList();
 
                     }
