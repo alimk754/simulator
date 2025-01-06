@@ -20,6 +20,42 @@ public class Simulator {
         return queues;
     }
 
+    public Thread getMonitorThread() {
+        return monitorThread;
+    }
+
+    public void setMonitorThread(Thread monitorThread) {
+        this.monitorThread = monitorThread;
+    }
+
+    public static void setInstance(Simulator instance) {
+        Simulator.instance = instance;
+    }
+
+    public int getMachineId() {
+        return machineId;
+    }
+
+    public void setMachineId(int machineId) {
+        this.machineId = machineId;
+    }
+
+    public int getQueueId() {
+        return QueueId;
+    }
+
+    public void setQueueId(int queueId) {
+        QueueId = queueId;
+    }
+
+    public List<Thread> getThreads() {
+        return threads;
+    }
+
+    public void setThreads(List<Thread> threads) {
+        this.threads = threads;
+    }
+
     public void setQueues(List<Queueing> queues) {
         this.queues = queues;
     }
@@ -97,7 +133,7 @@ public class Simulator {
             Products p = new Products();
             mainQueue.queue.add(p);
         }
-        ReplayTracker.takeSnapshot(machines, queues, machineId, QueueId);
+        ReplayTracker.takeSnapshot(this);
         System.out.println(mainQueue.queue.size());
         System.out.println(machines.size());
         System.out.println(queues.size());
@@ -106,6 +142,9 @@ public class Simulator {
 
     // Run the simulation
     public synchronized void run() {
+        System.out.println(queues.get(0).queue.size());
+        System.out.println(machines.size());
+        System.out.println(queues.size());
         for (Machine machine : machines) {
             Thread thread = new Thread(machine);
             threads.add(thread);
@@ -158,60 +197,81 @@ public class Simulator {
         for (Thread thread : threads) {
             thread.interrupt(); // Interrupt each thread
         }
-    }
 
-    // Delete all threads and reset state
-    public synchronized void delete() {
-        if (monitorThread != null) {
-            monitorThread.interrupt();
-        }
-
-        for (Thread thread : threads) {
-            thread.interrupt();
-        }
-
+        // Wait for all threads to terminate
         for (Thread thread : threads) {
             try {
-                thread.join();
+                thread.join(); // Wait for the thread to terminate
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
 
+        // Clear the list of threads
         threads.clear();
+    }
+
+    // Delete all threads and reset state
+    public synchronized void delete() {
+        interruptAllThreads(); // Interrupt and wait for all threads to terminate
         machines.clear();
         queues.clear();
         machineId = 0;
         QueueId = 0;
-        monitorThread = null;
+
+        // Stop the monitor thread
+        if (monitorThread != null) {
+
+            monitorThread = null;
+        }
     }
 
     // Revert to a previous state
     public synchronized void revert() {
+        System.out.println("Fff");
+        // Delete current state
         this.delete();
-        try {
-            Thread.sleep(100);
-            ReplayTracker replayTracker = ReplayTracker.getInstance();
+        System.out.println("Dddd");
 
-            // Restore queues
-            for (QueuesSnapShot queueSnapShot : replayTracker.getQueuesSnapShots()) {
-                Queueing queue = new Queueing(queueSnapShot);
-                queues.add(queue);
-            }
-
-            // Restore machines
-            for (MachineSnapShot machineSnapShot : replayTracker.getMachineSnapShots()) {
-                Machine machine = new Machine(machineSnapShot);
-                // No need to clear lists - just add machine
-                machines.add(machine);
-            }
-
-            this.machineId = replayTracker.getMachineId();
-            this.QueueId = replayTracker.getQueueId();
-            this.run();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            System.err.println("Revert interrupted: " + e.getMessage());
+        // Restore state from ReplayTracker
+        ReplayTracker replayTracker = ReplayTracker.getInstance();
+        for (QueuesSnapShot queueSnapShot : replayTracker.getQueuesSnapShots()) {
+            Queueing queue = new Queueing(queueSnapShot);
+            queues.add(queue);
         }
+        for (MachineSnapShot machineSnapShot : replayTracker.getMachineSnapShots()) {
+            Machine machine = new Machine(machineSnapShot);
+            for(Queueing queueing: machine.Sending){
+                int id=queueing.getId();
+                machine.Sending.remove(queueing);
+                machine.Sending.add(this.findQueueById(id));
+            }
+            for(Queueing queueing: machine.requesting){
+                int id=queueing.getId();
+                machine.requesting.remove(queueing);
+                machine.requesting.add(this.findQueueById(id));
+            }
+            machines.add(machine);
+        }
+
+        // Restore IDs
+        this.machineId = replayTracker.getMachineId();
+        this.QueueId = replayTracker.getQueueId();
+        System.out.println(this.toString());
+
+        // Restart the simulation
+        this.run();
+    }
+
+    @Override
+    public String toString() {
+        return "Simulator{" +
+                "monitorThread=" + monitorThread +
+                ", machineId=" + machineId +
+                ", QueueId=" + QueueId +
+                ", queues=" + queues +
+                ", machines=" + machines +
+                ", threads=" + threads +
+                '}';
     }
 }

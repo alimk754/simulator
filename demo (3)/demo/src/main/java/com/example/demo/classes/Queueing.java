@@ -51,10 +51,19 @@ public class Queueing {
     //constructors
     Queueing(QueuesSnapShot queuesSnapShot){
         this.queueWebSocket=queuesSnapShot.getQueueSubscriber();
-        this.queue=queuesSnapShot.getQueue();
+        this.queue=new ArrayList<>(queuesSnapShot.getQueue());
         this.id=queuesSnapShot.getId();
     }
     public Queueing (int capacity){
         queue=new ArrayList<>(capacity);
+    }
+
+    @Override
+    public String toString() {
+        return "Queueing{" +
+                "queueWebSocket=" + queueWebSocket +
+                ", id=" + id +
+                ", queue=" + queue +
+                '}';
     }
 }

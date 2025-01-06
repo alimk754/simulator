@@ -191,4 +191,18 @@ public class Machine implements Runnable{
         this.MachineId = machineSnapShot.getMachineId();
         this.webSocketController = machineSnapShot.getMachineSubscriber();
     }
+
+    @Override
+    public String toString() {
+        return "Machine{" +
+                "webSocketController=" + webSocketController +
+                ", MachineId=" + MachineId +
+                ", color='" + color + '\'' +
+                ", ogcolor='" + ogcolor + '\'' +
+                ", seconds=" + seconds +
+                ", Sending=" + Sending +
+                ", requesting=" + requesting +
+                ", isWorking=" + isWorking +
+                '}';
+    }
 }

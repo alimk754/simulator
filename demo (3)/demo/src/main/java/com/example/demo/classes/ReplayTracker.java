@@ -25,20 +25,25 @@ public class ReplayTracker {
     }
 
     // Take a snapshot of the current state
-    public static void takeSnapshot(List<Machine> machines, List<Queueing> queueingList, int machineId, int queueId) {
+    public static void takeSnapshot(Simulator simulator) {
         ReplayTracker tracker = getInstance();
         tracker.queuesSnapShots.clear();
         tracker.machineSnapShots.clear();
-        for (Machine machine : machines) {
+
+        // Save simulator state
+        tracker.machineId = simulator.getMachineId();
+        tracker.queueId = simulator.getQueueId();
+
+        // Save machine states
+        for (Machine machine : simulator.getMachines()) {
             tracker.machineSnapShots.add(new MachineSnapShot(machine));
         }
-        for (Queueing queueing : queueingList) {
+
+        // Save queue states
+        for (Queueing queueing : simulator.getQueues()) {
             tracker.queuesSnapShots.add(new QueuesSnapShot(queueing));
         }
-        tracker.machineId = machineId;
-        tracker.queueId = queueId;
     }
-
     // Getters and setters
     public int getMachineId() {
         return machineId;
