@@ -33,6 +33,10 @@ export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConne
     setConnections([]);
   }
   const simulate =async()=>{
+    if(numberOfProducts <= 0){
+      setError("Please provide a number of products");
+      return;
+    }    
     try{
         const response=axios.get(`http://localhost:8080/api/${numberOfProducts}`);
     }catch(err){}

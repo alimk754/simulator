@@ -51,9 +51,8 @@ useEffect(() => {
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          const [shapeIdType, shapeIdNumberStr] = id.split("-");
-          const shapeIdNumber = parseInt(shapeIdNumberStr, 10); // Convert to number
-          if (data.machineId === shapeIdNumber+1) {
+           // Convert to number
+          if (data.machineId === Number(id.split('-')[1]) + 1) {
             console.log(data);
             setMachineState({
               color: data.color,
