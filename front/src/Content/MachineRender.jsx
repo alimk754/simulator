@@ -1,7 +1,7 @@
 import React from "react";
 import Machine from "../Machine/Machine";
 
-const MachineRender = ({ machines, isConnectionMode, positions, setPositions, onClick }) => {
+const MachineRender = ({ machines, isConnectionMode, positions, setPositions, onClick,startShape }) => {
   return (
     <div className="content" onClick={onClick}>
       {machines.map((machine, index) => (
@@ -13,6 +13,7 @@ const MachineRender = ({ machines, isConnectionMode, positions, setPositions, on
           type="machine"
           positions={positions}
           setPositions={setPositions}
+          startShape={startShape}
         />
       ))}
     </div>

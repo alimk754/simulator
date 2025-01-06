@@ -139,6 +139,7 @@ const Content = () => {
         positions={positions}
         setPositions={setPositions}
         onClick={selectShape}
+        startShape={startShape}
       />
 
       <MachineRender
@@ -147,6 +148,7 @@ const Content = () => {
         positions={positions}
         setPositions={setPositions}
         onClick={selectShape}
+        startShape={startShape}
       />
 
       {connections.map((arrow) => (

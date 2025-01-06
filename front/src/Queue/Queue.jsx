@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import Draggable from "react-draggable";
 
-const Queue = ({ id, content, isDraggable, type, positions, setPositions }) => {
+const Queue = ({ id, content, isDraggable, type, positions, setPositions,startShape }) => {
   const buttonRef = useRef(null);
   const [queueState, setQueueState] = useState(0); 
   const [products, setProducts] = useState([]); 
@@ -103,10 +103,11 @@ const Queue = ({ id, content, isDraggable, type, positions, setPositions }) => {
             borderRadius: "10%",
             marginRight: "5px",
             color: "white",
-            border: "none",
             fontSize: "14px",
             fontWeight: "bold",
             cursor: "grab",
+            boxShadow: startShape === id ? "0 0 10px rgba(76, 175, 80, 0.5)" : "none",
+            border: startShape === id ? "3px solid #4CAF50" : "none"
           }}
         >
           {content  || "Queue"}

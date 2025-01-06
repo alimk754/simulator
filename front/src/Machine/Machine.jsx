@@ -1,7 +1,7 @@
 import React, { useRef, useEffect,useState } from "react";
 import Draggable from "react-draggable";
 
-const Machine = ({id, content, isDraggable, type, positions, setPositions}) => {
+const Machine = ({id, content, isDraggable, type, positions, setPositions,startShape}) => {
   const buttonRef = useRef(null);
 
   // Update position whenever drag occurs
@@ -103,12 +103,13 @@ useEffect(() => {
             height: "60px",
             borderRadius: "50%",
             marginRight: "5px",
-            border: "none",
             backgroundColor: machineState.color,
             color: "white",
             fontWeight: "bold",
             fontSize: "14px",
             cursor: "grab",
+            boxShadow: startShape === id ? "0 0 10px rgba(76, 175, 80, 0.5)" : "none",
+            border: startShape === id ? "3px solid #4CAF50" : "none",
           }}
         >
           {content || "Machine"}
