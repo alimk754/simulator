@@ -1,21 +1,21 @@
 package com.example.demo.controllers;
 
 import com.example.demo.classes.Machine;
+import com.example.demo.classes.Queueing;
 import com.example.demo.dto.MachineDto;
 import com.example.demo.dto.QueueDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.concurrent.ConcurrentHashMap;
-
-@Component
-public class WebSocketController extends TextWebSocketHandler {
+@Controller
+public class QueueWebSocket extends TextWebSocketHandler{
     private static final Logger logger = LoggerFactory.getLogger(WebSocketController.class);
     private final ConcurrentHashMap<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -25,32 +25,12 @@ public class WebSocketController extends TextWebSocketHandler {
         logger.info("New WebSocket connection established: {}", session.getId());
         sessions.put(session.getId(), session);
     }
-
-    public void updateMachineState(Machine machine) {
-        try {
-            MachineDto stateDTO = new MachineDto(
-                    machine.getMachineId(),
-                    machine.getColor(),
-                    machine.isWorking()
-            );
-            String message = objectMapper.writeValueAsString(stateDTO);
-
-            sessions.values().forEach(session -> {
-                try {
-                    if (session.isOpen()) {
-                        session.sendMessage(new TextMessage(message));
-                    }
-                } catch (Exception e) {
-                    logger.error("Error sending message to session {}", session.getId(), e);
-                }
-            });
-        } catch (Exception e) {
-            logger.error("Error updating machine state", e);
-        }
-    }
-    public void uptadeQueue(int capacity){
+    public void uptadeQueue(Queueing queue){
         try {
             QueueDto queueDto=new QueueDto();
+            queueDto.capacity=queue.getQueue().size();
+            queueDto.id=queue.getId();
+            queueDto.setProducts(queue.getQueue());
             String message = objectMapper.writeValueAsString(queueDto);
 
             sessions.values().forEach(session -> {

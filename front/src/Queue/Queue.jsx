@@ -1,9 +1,9 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Draggable from "react-draggable";
 
 const Queue = ({id, content, isDraggable, type, positions, setPositions}) => {
   const buttonRef = useRef(null);
-
+  const [QueueState,setQueueState]=useState(0); 
   // Update position whenever drag occurs
   const handleDrag = (e, data) => {
     const rect = buttonRef.current.getBoundingClientRect();
@@ -29,6 +29,53 @@ const Queue = ({id, content, isDraggable, type, positions, setPositions}) => {
       }));
     }
   }, []);
+  useEffect(() => {
+    let ws = null;
+    let reconnectAttempt = 0;
+    const maxReconnectAttempts = 5;
+  
+    const connect = () => {
+      try {
+        console.log('Attempting WebSocket connection...');
+        ws = new WebSocket('ws://localhost:8080/qs');
+        
+        ws.onopen = () => {
+          console.log('WebSocket Connected');
+          reconnectAttempt = 0; // Reset attempt counter on successful connection
+        };
+  
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+             // Convert to number
+            if (data.id === Number(id.split('-')[1]) + 1) {
+              console.log(data);
+              setQueueState(data.capacity)
+            }
+          } catch (e) {
+            console.error('Error parsing WebSocket message:', e);
+          }
+        };
+  
+        ws.onerror = (error) => {
+          console.error('WebSocket Error:', error);
+        };
+  
+        ws.onclose = (e) => {
+          console.log('WebSocket Closed:', e.reason);
+          if (reconnectAttempt < maxReconnectAttempts) {
+            reconnectAttempt++;
+            console.log(`Reconnecting attempt ${reconnectAttempt}...`);
+            setTimeout(connect, 2000); // Retry after 2 seconds
+          }
+        };
+      } catch (error) {
+        console.error('WebSocket connection error:', error);
+      }
+    };
+  
+    connect();
+  }, [QueueState]);
 
   return (
     <Draggable 
@@ -54,7 +101,7 @@ const Queue = ({id, content, isDraggable, type, positions, setPositions}) => {
             cursor: "grab",
           }}
         >
-          {content || "Queue"}
+          {content +"|"+QueueState|| "Queue"}
         </button>
       </div>
     </Draggable>

@@ -17,6 +17,8 @@ public class AddingController {
     private AddingService addingService;
     @Autowired
     private WebSocketController webSocketController;
+    @Autowired
+    private  QueueWebSocket queueWebSocket;
     @PostMapping("")
     public void addMachine(@RequestBody MachineDto machine){
         Machine machine1=new Machine();
@@ -28,6 +30,7 @@ public class AddingController {
     public void addQueue(@RequestBody QueueDto queue)
     {
         Queueing q=new Queueing(queue.capacity);
+        q.setQueueWebSocket(queueWebSocket);
         addingService.addQueue(q);
         System.out.println("add m");
     }
