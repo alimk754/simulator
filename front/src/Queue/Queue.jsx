@@ -109,7 +109,7 @@ const Queue = ({ id, content, isDraggable, type, positions, setPositions }) => {
             cursor: "grab",
           }}
         >
-          {content + "|" + queueState || "Queue"}
+          {content  || "Queue"}
         </button>
 
         {showProducts && (
