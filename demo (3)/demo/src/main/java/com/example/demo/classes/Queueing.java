@@ -1,5 +1,6 @@
 package com.example.demo.classes;
 
+import com.example.demo.mementos.QueuesSnapShot;
 import com.example.demo.subscribers.QueueSubscriber;
 import com.example.demo.controllers.QueueWebSocket;
 
@@ -10,15 +11,30 @@ public class Queueing {
     private QueueSubscriber queueWebSocket; //programming to interface
     private int id;
     List<Products> queue=new ArrayList<>(50);
-
+    //geeters and setters
     public List<Products> getQueue() {
         return queue;
+    }
+
+    public QueueSubscriber getQueueWebSocket() {
+        return queueWebSocket;
     }
 
     public void setQueue(List<Products> queue) {
         this.queue = queue;
     }
+    public void setQueueWebSocket(QueueWebSocket queueWebSocket) {
+        this.queueWebSocket = queueWebSocket;
+    }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    //synchronized functions
     public synchronized void add(Products p){
         queue.addFirst(p);
         queueWebSocket.updateQueue(this);
@@ -31,18 +47,12 @@ public class Queueing {
         Products p=queue.removeLast();
         queueWebSocket.updateQueue(this);
         return p;
-
     }
-    public void setQueueWebSocket(QueueWebSocket queueWebSocket) {
-        this.queueWebSocket = queueWebSocket;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    //constructors
+    Queueing(QueuesSnapShot queuesSnapShot){
+        this.queueWebSocket=queuesSnapShot.getQueueSubscriber();
+        this.queue=queuesSnapShot.getQueue();
+        this.id=queuesSnapShot.getId();
     }
     public Queueing (int capacity){
         queue=new ArrayList<>(capacity);

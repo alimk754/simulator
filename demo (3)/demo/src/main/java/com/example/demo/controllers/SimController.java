@@ -29,6 +29,9 @@ public class SimController {
     public void delete(){
         System.out.println("deleted");
         simulator.delete();
-
+    }
+    @GetMapping("")
+    public void revert(){
+        simulator.revert();
     }
 }

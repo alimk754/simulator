@@ -42,6 +42,9 @@ export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConne
         const response=axios.get(`http://localhost:8080/api/${numberOfProducts}`);
     }catch(err){}
   }
+  const handleReplay=async()=>{
+    const response=await axios.get(`http://localhost:8080/api`);
+  }
   return (
     <div className="toolbar">
       <button className="QButton" onClick={onAddQueue}>
@@ -55,7 +58,7 @@ export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConne
       <button className="connectionButton" onClick={handleToggleConnectionMode}>{isConnectionMode ? "Drawing Arrows (Click to Exit)" : "Connect"}</button>
       <button className="runButton" onClick={simulate}>Run</button>
       <button className="stopButton">Stop</button>
-      <button className="resetButton">Reset</button>
+      <button className="resetButton" onClick={handleReplay}>Replay</button>
       <button className="deleteButton" onClick={handleDelete}>Delete</button>
 
       <div className="input">

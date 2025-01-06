@@ -1,5 +1,7 @@
 package com.example.demo.classes;
 
+import com.example.demo.mementos.MachineSnapShot;
+import com.example.demo.mementos.QueuesSnapShot;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -7,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Simulator {
+    private Thread monitorThread;
     static Simulator instance = null;
     private int machineId=0;
     private int QueueId=0;
@@ -86,24 +89,45 @@ public class Simulator {
         }
         return instance;
     }
-    //simulation
-    public synchronized void start(int size){
-        Queueing mainQueue=queues.get(0);
-        for(int i=0;i<size;i++){
-            Products p=new Products();
+
+    // Start the simulation
+    public synchronized void start(int size) {
+        Queueing mainQueue = queues.get(0);
+        for (int i = 0; i < size; i++) {
+            Products p = new Products();
             mainQueue.queue.add(p);
         }
+        ReplayTracker.takeSnapshot(machines, queues, machineId, QueueId);
         System.out.println(mainQueue.queue.size());
         System.out.println(machines.size());
         System.out.println(queues.size());
-        for (Machine machine :machines){
-            Thread thread =new Thread(machine);
+        run();
+    }
+
+    // Run the simulation
+    public synchronized void run() {
+        for (Machine machine : machines) {
+            Thread thread = new Thread(machine);
             threads.add(thread);
             thread.start();
         }
-        new Thread(this::monitorThreads).start();
+
+        // Stop existing monitor thread if running
+        if (monitorThread != null && monitorThread.isAlive()) {
+            monitorThread.interrupt();
+            try {
+                monitorThread.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        // Start new monitor thread
+        monitorThread = new Thread(this::monitorThreads);
+        monitorThread.start();
     }
-    // Method to monitor threads
+
+    // Monitor threads to check if all are waiting
     private void monitorThreads() {
         while (true) {
             try {
@@ -129,21 +153,65 @@ public class Simulator {
         }
     }
 
-    // Method to interrupt all threads
+    // Interrupt all threads
     private void interruptAllThreads() {
         for (Thread thread : threads) {
             thread.interrupt(); // Interrupt each thread
         }
     }
 
-    public void delete(){
-        for (Thread thread :threads){
+    // Delete all threads and reset state
+    public synchronized void delete() {
+        if (monitorThread != null) {
+            monitorThread.interrupt();
+        }
+
+        for (Thread thread : threads) {
             thread.interrupt();
         }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
         threads.clear();
         machines.clear();
         queues.clear();
-        machineId=0;
-        QueueId=0;
+        machineId = 0;
+        QueueId = 0;
+        monitorThread = null;
+    }
+
+    // Revert to a previous state
+    public synchronized void revert() {
+        this.delete();
+        try {
+            Thread.sleep(100);
+            ReplayTracker replayTracker = ReplayTracker.getInstance();
+
+            // Restore queues
+            for (QueuesSnapShot queueSnapShot : replayTracker.getQueuesSnapShots()) {
+                Queueing queue = new Queueing(queueSnapShot);
+                queues.add(queue);
+            }
+
+            // Restore machines
+            for (MachineSnapShot machineSnapShot : replayTracker.getMachineSnapShots()) {
+                Machine machine = new Machine(machineSnapShot);
+                // No need to clear lists - just add machine
+                machines.add(machine);
+            }
+
+            this.machineId = replayTracker.getMachineId();
+            this.QueueId = replayTracker.getQueueId();
+            this.run();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("Revert interrupted: " + e.getMessage());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.classes;
 
+import com.example.demo.mementos.MachineSnapShot;
 import com.example.demo.subscribers.MachineSubscriber;
 import com.example.demo.controllers.WebSocketController;
 
@@ -71,7 +72,10 @@ public class Machine implements Runnable{
     public void setWorking(boolean working) {
         isWorking = working;
     }
-
+    public MachineSubscriber getWebSocketController() {
+        return webSocketController;
+    }
+    //method run
     @Override
     public void run() {
         Random random = new Random();
@@ -171,10 +175,20 @@ public class Machine implements Runnable{
     public void removerequesting(Queueing q) {
         requesting.remove(q);
     }
-    //Builder
+
+    //constructors
     public Machine(){
         Random random = new Random();
         seconds = random.nextInt(21) + 5;
         this.color="#000000";
+    }
+    public Machine(MachineSnapShot machineSnapShot) {
+        this.isWorking = false; // Start fresh
+        this.color = machineSnapShot.getColor();
+        this.requesting = new ArrayList<>(machineSnapShot.getRequesting());
+        this.Sending = new ArrayList<>(machineSnapShot.getSending());
+        this.seconds = machineSnapShot.getSeconds();
+        this.MachineId = machineSnapShot.getMachineId();
+        this.webSocketController = machineSnapShot.getMachineSubscriber();
     }
 }

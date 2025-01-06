@@ -15,6 +15,7 @@ public class MachineSnapShot {
     List<Queueing> Sending=new ArrayList<>();
     List<Queueing> requesting=new ArrayList<>();
     boolean isWorking = false;
+    MachineSubscriber machineSubscriber;
 
     public int getMachineId() {
         return MachineId;
@@ -67,12 +68,23 @@ public class MachineSnapShot {
     public void setWorking(boolean working) {
         isWorking = working;
     }
-    MachineSnapShot(Machine m){
-        this.color=m.getColor();
-        this.isWorking= m.isWorking();
-        this.seconds=m.getSeconds();
-        this.MachineId=m.getMachineId();
-        this.requesting=m.getRequesting();
-        this.Sending=m.getSending();
+
+    public MachineSubscriber getMachineSubscriber() {
+        return machineSubscriber;
+    }
+
+    public void setMachineSubscriber(MachineSubscriber machineSubscriber) {
+        this.machineSubscriber = machineSubscriber;
+    }
+
+    public MachineSnapShot(Machine m) {
+        this.color = m.getColor();
+        this.isWorking = m.isWorking();
+        this.seconds = m.getSeconds();
+        this.MachineId = m.getMachineId();
+        // Create new lists with copied elements
+        this.requesting = new ArrayList<>(m.getRequesting());
+        this.Sending = new ArrayList<>(m.getSending());
+        this.machineSubscriber = m.getWebSocketController();
     }
 }
