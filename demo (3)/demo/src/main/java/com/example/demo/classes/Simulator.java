@@ -102,4 +102,11 @@ public class Simulator {
             new Thread(machine).start();
         }
     }
+
+    public void delete(){
+        machines.clear();
+        queues.clear();
+        machineId=0;
+        QueueId=0;
+    }
 }

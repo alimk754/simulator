@@ -24,4 +24,11 @@ public class SimController {
         System.out.println(capacity);
         simulator.start(capacity);
     }
+
+    @DeleteMapping("/delete")
+    public void delete(){
+        System.out.println("deleted");
+        simulator.delete();
+
+    }
 }

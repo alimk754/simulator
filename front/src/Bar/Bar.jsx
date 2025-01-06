@@ -22,7 +22,7 @@ export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConne
     setTypeOFStart(null);
   }
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setNumberOfProducts(0);
     setError(null);
     setStartShape(null);
@@ -31,6 +31,7 @@ export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConne
     setMachines([]);
     setQueues([]);
     setConnections([]);
+    await axios.delete("http://localhost:8080/api/delete");
   }
   const simulate =async()=>{
     if(numberOfProducts <= 0){
