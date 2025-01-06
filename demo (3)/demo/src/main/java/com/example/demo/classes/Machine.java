@@ -179,7 +179,7 @@ public class Machine implements Runnable{
     //constructors
     public Machine(){
         Random random = new Random();
-        seconds = random.nextInt(21) + 5;
+        seconds = random.nextInt(8) + 5;
         this.color="#000000";
     }
     public Machine(MachineSnapShot machineSnapShot) {

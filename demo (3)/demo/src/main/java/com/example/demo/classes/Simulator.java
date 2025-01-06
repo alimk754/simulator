@@ -242,15 +242,21 @@ public class Simulator {
         }
         for (MachineSnapShot machineSnapShot : replayTracker.getMachineSnapShots()) {
             Machine machine = new Machine(machineSnapShot);
-            for(Queueing queueing: machine.Sending){
-                int id=queueing.getId();
-                machine.Sending.remove(queueing);
+            // For machine.Sending
+            Iterator<Queueing> sendingIterator = machine.Sending.iterator();
+            while (sendingIterator.hasNext()) {
+                Queueing queueing = sendingIterator.next();
+                int id = queueing.getId();
+                sendingIterator.remove(); // Safely remove the current element
                 machine.Sending.add(this.findQueueById(id));
-
             }
-            for(Queueing queueing: machine.requesting){
-                int id=queueing.getId();
-                machine.requesting.remove(queueing);
+
+            // For machine.requesting
+            Iterator<Queueing> requestingIterator = machine.requesting.iterator();
+            while (requestingIterator.hasNext()) {
+                Queueing queueing = requestingIterator.next();
+                int id = queueing.getId();
+                requestingIterator.remove(); // Safely remove the current element
                 machine.requesting.add(this.findQueueById(id));
             }
             machines.add(machine);
