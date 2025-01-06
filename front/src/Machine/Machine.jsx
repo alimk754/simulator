@@ -1,7 +1,7 @@
 import React, { useRef, useEffect,useState } from "react";
 import Draggable from "react-draggable";
 
-const Machine = ({id, key, content, isDraggable, type, positions, setPositions}) => {
+const Machine = ({id, content, isDraggable, type, positions, setPositions}) => {
   const buttonRef = useRef(null);
 
   // Update position whenever drag occurs

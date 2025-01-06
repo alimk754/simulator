@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import Draggable from "react-draggable";
 
-const Queue = ({id, key, content, isDraggable, type, positions, setPositions}) => {
+const Queue = ({id, content, isDraggable, type, positions, setPositions}) => {
   const buttonRef = useRef(null);
 
   // Update position whenever drag occurs
