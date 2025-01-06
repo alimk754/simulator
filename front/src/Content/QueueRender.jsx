@@ -1,7 +1,7 @@
 import React from "react";
 import Queue from "../Queue/Queue";
 
-const QueueRender= ({ queues, isConnectionMode, positions, setPositions, onClick }) => {
+const QueueRender= ({ queues, isConnectionMode, positions, setPositions, onClick,startShape }) => {
   return (
     <div className="content" onClick={onClick}>
       {queues.map((queue, index) => (
@@ -13,6 +13,7 @@ const QueueRender= ({ queues, isConnectionMode, positions, setPositions, onClick
           type="queue"
           positions={positions}
           setPositions={setPositions}
+          startShape={startShape}
         />
       ))}
     </div>
