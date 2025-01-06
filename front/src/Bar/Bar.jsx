@@ -55,9 +55,10 @@ export const Bar = ({setStartShape, setTypeOFStart, isConnectionMode, setIsConne
         Add M
       </button>
 
-      <button className="connectionButton" onClick={handleToggleConnectionMode}>{isConnectionMode ? "Drawing Arrows (Click to Exit)" : "Connect"}</button>
+      <button className="connectionButton" onClick={handleToggleConnectionMode}>
+        {isConnectionMode ? "Drawing Arrows (Click to Exit)" : "Connect"}
+      </button>
       <button className="runButton" onClick={simulate}>Run</button>
-      <button className="stopButton">Stop</button>
       <button className="resetButton" onClick={handleReplay}>Replay</button>
       <button className="deleteButton" onClick={handleDelete}>Delete</button>
 

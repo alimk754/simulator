@@ -87,13 +87,7 @@
     background-color: #218838;
 }
 
-.toolbar .stopButton {
-    background-color: #dc3545;
-}
 
-.toolbar .stopButton:hover {
-    background-color: #c82333;
-}
 
 .toolbar .resetButton {
     background-color: #6c757d;
