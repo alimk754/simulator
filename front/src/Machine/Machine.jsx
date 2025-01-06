@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect,useState } from "react";
 import Draggable from "react-draggable";
 
 const Machine = ({id, key, content, isDraggable, type, positions, setPositions}) => {
@@ -29,6 +29,62 @@ const Machine = ({id, key, content, isDraggable, type, positions, setPositions})
       }));
     }
   }, []);
+  const [machineState, setMachineState] = useState({
+    color: '#000000',
+    isWorking: false
+  });
+useEffect(() => {
+  let ws = null;
+  let reconnectAttempt = 0;
+  const maxReconnectAttempts = 5;
+
+  const connect = () => {
+    try {
+      console.log('Attempting WebSocket connection...');
+      ws = new WebSocket('ws://localhost:8080/ws');
+
+      ws.onopen = () => {
+        console.log('WebSocket Connected');
+        reconnectAttempt = 0; // Reset attempt counter on successful connection
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log(data);
+          if (data.machineId === id) {
+            setMachineState({
+              color: data.color,
+              isWorking: data.isWorking
+            });
+          }
+        } catch (e) {
+          console.error('Error parsing WebSocket message:', e);
+        }
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket Error:', error);
+      };
+
+      ws.onclose = (e) => {
+        console.log('WebSocket Closed:', e.reason);
+        if (reconnectAttempt < maxReconnectAttempts) {
+          reconnectAttempt++;
+          console.log(`Reconnecting attempt ${reconnectAttempt}...`);
+          setTimeout(connect, 2000); // Retry after 2 seconds
+        }
+      };
+    } catch (error) {
+      console.error('WebSocket connection error:', error);
+    }
+  };
+
+  connect();
+
+  // Cleanup function
+  
+}, [machineState]);
 
   return (
     <Draggable 
@@ -47,7 +103,7 @@ const Machine = ({id, key, content, isDraggable, type, positions, setPositions})
             borderRadius: "50%",
             marginRight: "5px",
             border: "none",
-            backgroundColor: "black",
+            backgroundColor: machineState.color,
             color: "white",
             fontWeight: "bold",
             fontSize: "14px",

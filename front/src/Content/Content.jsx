@@ -27,12 +27,13 @@ const Content = () => {
   };
 
   const addMachine = () => {
+  
+    const newMachine = `M${machines.length}`;
+    setMachines([...machines, newMachine]);
     try {
       const response=axios.post("http://localhost:8080/api/add",{}) 
     } catch (error) {   
     }
-    const newMachine = `M${machines.length}`;
-    setMachines([...machines, newMachine]);
   };
 
   const selectShape = (e) => {

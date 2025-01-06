@@ -1,6 +1,8 @@
 package com.example.demo.classes;
 
+import com.example.demo.controllers.WebSocketController;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.crypto.Mac;
 import java.util.ArrayList;
@@ -9,15 +11,24 @@ import java.util.Random;
 
 
 public class Machine implements Runnable{
+    private WebSocketController webSocketController;
     private int MachineId;
     private String color;
-    private String ogcolor;
+    private final String ogcolor="#000000";
     int seconds=3;
     List<Queueing> Sending=new ArrayList<>();
     List<Queueing> requesting=new ArrayList<>();
     boolean isWorking = false;
 
     // Getters and Setters
+
+    public WebSocketController getWebSocketController() {
+        return webSocketController;
+    }
+
+    public void setWebSocketController(WebSocketController webSocketController) {
+        this.webSocketController = webSocketController;
+    }
 
     public List<Queueing> getRequesting() {
         return requesting;
@@ -108,6 +119,7 @@ public class Machine implements Runnable{
                         return;
                     }
                     this.color = product.getColor();
+                    webSocketController.updateMachineState(this);
                     this.isWorking = true;
                 }
 
@@ -129,7 +141,9 @@ public class Machine implements Runnable{
                 synchronized (this) {
                     this.isWorking = false;
                     notifyAll();
+                    this.color=ogcolor;
                     System.out.println("Machine " + getMachineId() + " is notifying other threads");
+                    webSocketController.updateMachineState(this);
                 }
 
             } catch (InterruptedException e) {
@@ -160,6 +174,5 @@ public class Machine implements Runnable{
         Random random = new Random();
         seconds = random.nextInt(21) + 5;
         this.color="#000000";
-        this.ogcolor="#000000";
     }
 }

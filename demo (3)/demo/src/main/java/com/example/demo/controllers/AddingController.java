@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.*;
 public class AddingController {
     @Autowired
     private AddingService addingService;
+    @Autowired
+    private WebSocketController webSocketController;
     @PostMapping("")
     public void addMachine(@RequestBody MachineDto machine){
         Machine machine1=new Machine();
+        machine1.setWebSocketController(webSocketController);
         addingService.addMachine(machine1);
         System.out.println("add m");
     }
