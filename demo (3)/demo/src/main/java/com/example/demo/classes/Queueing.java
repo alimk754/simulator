@@ -12,7 +12,7 @@ public class Queueing {
     private int id;
     List<Products> queue=new ArrayList<>(50);
     public synchronized void add(Products p){
-        queue.add(p);
+        queue.addFirst(p);
         notifyAll();
     }
     public synchronized Products remove() throws InterruptedException {

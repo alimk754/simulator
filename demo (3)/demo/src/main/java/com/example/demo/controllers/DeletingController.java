@@ -1,9 +1,6 @@
 package com.example.demo.controllers;
 
-import com.example.demo.anotherService.AddingService;
-import com.example.demo.anotherService.DeletingService;
-import com.example.demo.classes.Machine;
-import com.example.demo.classes.Queueing;
+import com.example.demo.controllerservice.DeletingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
